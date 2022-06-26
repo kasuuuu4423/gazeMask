@@ -26,19 +26,13 @@ class Socket{
   
   void update(){
     if(server != null){
-      Client c = server.available();
-      if (c != null) {
-        char s = c.readChar();
-        if(s == '1'){
-          println("send: " + data);
-          server.write(data);
-        }
-      }
+        println("send: " + data);
+        server.write(data);
     }
     else if(client != null){
-      client.write("1");
       String s = client.readString();
       if (s != null) {
+        println("recieve: " + s);
         recieveData = s;
       }
     }

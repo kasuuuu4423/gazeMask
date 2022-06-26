@@ -38,8 +38,22 @@ void setup() {
 
 void draw() {
   float[] gazePoints = gazePoint.getPoints();
-  socket.setData(gazePoints[0]+ "," +gazePoints[1]);
+  int isShoted = gazePoint.isShoted()?1:0;
+  socket.setData(isShoted+ "," +gazePoints[0]+ "," +gazePoints[1]);
   socket.update();
+  
+  String data = socket.getRecieveData();
+  if(data != ""){
+    String[] location = data.split(",");
+    boolean slaveIsShoted = location[0] == "1" ? true : false;
+    int rX = parseInt(location[1]);
+    int rY = parseInt(location[2]);
+    gazePointSlave.setNowPoint(rX, rY);
+    float[] slaveGazePoints = gazePointSlave.getPoints();
+    if(slaveIsShoted){
+      imageScratch.shoted(slaveGazePoints[0], slaveGazePoints[1]);
+    }
+  }
   
   imageScratch.draw();
   gazePoint.draw();
@@ -49,14 +63,5 @@ void draw() {
 void keyReleased() {
   float[] gazePoints = gazePoint.getPoints();
   imageScratch.shoted(gazePoints[0], gazePoints[1]);
-  
-  String data = socket.getRecieveData();
-  if(data != ""){
-    String[] location = data.split(",");
-    int rX = parseInt(location[0]);
-    int rY = parseInt(location[1]);
-    gazePointSlave.setNowPoint(rX, rY);
-    float[] slaveGazePoints = gazePointSlave.getPoints();
-    imageScratch.shoted(slaveGazePoints[0], slaveGazePoints[1]);
-  }
+  gazePoint.shoted();
 }

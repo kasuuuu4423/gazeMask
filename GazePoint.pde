@@ -4,6 +4,7 @@ class GazePoint{
   GazeTrack gazeTrack;
   float x, y;
   float px, py;
+  boolean isShoted = false;
   
   GazePoint(GazeTrack gazeTrack){
     this.gazeTrack = gazeTrack;
@@ -14,6 +15,18 @@ class GazePoint{
   GazePoint(){
     x = 0;
     y = 0;
+  }
+  
+  boolean isShoted(){
+    return isShoted; 
+  }
+  
+  void shoted(){
+    isShoted = true;
+  }
+  
+  void load(){
+    isShoted = false;
   }
   
   void setNowPoint(){
