@@ -2,7 +2,7 @@ import gazetrack.*;
 import processing.net.*;
 
 final boolean isDisplay = false;
-final String serverAddress = "127.0.0.1";
+final String serverAddress = "192.168.100.3";
 
 GazeTrack gazeTrack;
 GazePoint gazePoint;
@@ -37,13 +37,19 @@ void setup() {
 }
 
 void draw() {
+  float[] gazePoints = gazePoint.getPoints();
+  socket.setData(gazePoints[0]+ "," +gazePoints[1]);
   socket.update();
   
+  imageScratch.draw();
+  gazePoint.draw();
+  gazePointSlave.draw();
+}
+
+void keyReleased() {
   float[] gazePoints = gazePoint.getPoints();
-  float[] gazePrevPoints = gazePoint.getPrevPoints();
-  float[] points = {gazePoints[0], gazePoints[1], gazePrevPoints[0], gazePrevPoints[1]};
+  imageScratch.shoted(gazePoints[0], gazePoints[1]);
   
-  socket.setData(gazePoints[0]+ "," +gazePoints[1]);
   String data = socket.getRecieveData();
   if(data != ""){
     String[] location = data.split(",");
@@ -51,12 +57,6 @@ void draw() {
     int rY = parseInt(location[1]);
     gazePointSlave.setNowPoint(rX, rY);
     float[] slaveGazePoints = gazePointSlave.getPoints();
-    float[] slaveGazePrevPoints = gazePointSlave.getPrevPoints();
-    float[] slavePoints = {slaveGazePoints[0], slaveGazePoints[1], slaveGazePrevPoints[0], slaveGazePrevPoints[1]};
-    imageScratch.setLinePoints(slavePoints);
-    gazePointSlave.draw();
+    imageScratch.shoted(slaveGazePoints[0], slaveGazePoints[1]);
   }
-  imageScratch.setLinePoints(points);
-  imageScratch.draw();
-  gazePoint.draw();
 }

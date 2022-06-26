@@ -25,6 +25,24 @@ class ImageScratch{
     px = points[2];
     py = points[3];
   }
+    
+    
+  void shoted(float maskX, float maskY) {
+    pg.beginDraw();
+    pg.fill(0);
+    pg.ellipse(maskX, maskY, penSize, penSize); 
+    
+    pg.endDraw();   
+    
+    // img1をマウスクリックのライン様にくりぬく
+    img1.mask(pg);
+    
+    // 背景画像
+    image(img2, 0, 0);
+    
+    // 上の画像(マスクされたもの)
+    image(img1, 0, 0);
+  }
   
   void draw(){
     pg.beginDraw();
