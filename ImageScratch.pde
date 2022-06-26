@@ -4,7 +4,7 @@ class ImageScratch{
   PGraphics pg;
   float x, y, px, py;
   
-  int penSize = 30;
+  int penSize = 40;
   
   ImageScratch(String upperImagePath, String lowerImagePath){
     img1 = loadImage(upperImagePath);

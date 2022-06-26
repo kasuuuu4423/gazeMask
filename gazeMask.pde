@@ -8,6 +8,9 @@ GazeTrack gazeTrack;
 GazePoint gazePoint;
 GazePoint gazePointSlave;
 
+color c = color(255, 0, 0);
+color cSlave = color(255, 255, 0);
+
 Server server;
 Client client;
 Socket socket;
@@ -16,8 +19,8 @@ ImageScratch imageScratch;
 
 void setup() {
   gazeTrack = new GazeTrack(this);
-  gazePoint = new GazePoint(gazeTrack);
-  gazePointSlave = new GazePoint();
+  gazePoint = new GazePoint(gazeTrack, c);
+  gazePointSlave = new GazePoint(cSlave);
   
   if(isDisplay){
     client = new Client(this, serverAddress, 5555);
@@ -39,18 +42,17 @@ void setup() {
 void draw() {
   float[] gazePoints = gazePoint.getPoints();
   int isShoted = gazePoint.isShoted()?1:0;
-  socket.setData(isShoted+ "," +gazePoints[0]+ "," +gazePoints[1]);
+  int gazeStatus = gazePoint.gazePresent()?1:0;
+  socket.setData(gazeStatus+ "," +isShoted+ "," +gazePoints[0]+ "," +gazePoints[1]);
+  gazePoint.load();
   socket.update();
   
   String data = socket.getRecieveData();
   if(data != ""){
     String[] location = data.split(",");
-    boolean slaveIsShoted = location[0] == "1" ? true : false;
-    int rX = parseInt(location[1]);
-    int rY = parseInt(location[2]);
-    gazePointSlave.setNowPoint(rX, rY);
+    gazePointSlave.setRecieveData(location);
     float[] slaveGazePoints = gazePointSlave.getPoints();
-    if(slaveIsShoted){
+    if(gazePointSlave.isShoted()){
       imageScratch.shoted(slaveGazePoints[0], slaveGazePoints[1]);
     }
   }

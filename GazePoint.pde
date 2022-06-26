@@ -5,16 +5,21 @@ class GazePoint{
   float x, y;
   float px, py;
   boolean isShoted = false;
+  int status = 0;
+  color c;
+  float alpha = 120;
   
-  GazePoint(GazeTrack gazeTrack){
+  GazePoint(GazeTrack gazeTrack, color c){
     this.gazeTrack = gazeTrack;
     x = 0;
     y = 0;
+    this.c = c;
   }
   
-  GazePoint(){
+  GazePoint(color c){
     x = 0;
     y = 0;
+    this.c = c;
   }
   
   boolean isShoted(){
@@ -27,6 +32,14 @@ class GazePoint{
   
   void load(){
     isShoted = false;
+  }
+  
+  void setRecieveData(String[] data){
+    isShoted = data[1] == "1" ? true : false;
+    int rX = parseInt(data[2]);
+    int rY = parseInt(data[3]);
+    setGazeStatus(parseInt(data[0]));
+    setNowPoint(rX, rY);
   }
   
   void setNowPoint(){
@@ -59,14 +72,27 @@ class GazePoint{
     return prevPoints;
   }
   
+  void setGazeStatus(int status){
+    this.status = status;
+  }
+  
+  boolean gazePresent(){
+    return gazeTrack.gazePresent();
+  }
+  
+  boolean gazeStatus(){
+    if(gazeTrack != null) return gazeTrack.gazePresent();
+    return status==1;
+  }
+  
   void draw(){
     if(gazeTrack != null){
       setNowPoint();
     }
-    noFill();
+    fill(c, alpha);
     stroke(50, 100);
     strokeWeight(4);
-    if(gazeTrack == null || gazeTrack.gazePresent()){
+    if(gazeStatus()){
       ellipse(x, y, 80, 80);
     }
   }
