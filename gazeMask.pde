@@ -42,7 +42,7 @@ void setup() {
 void draw() {
   float[] gazePoints = gazePoint.getPoints();
   int isShoted = gazePoint.isShoted()?1:0;
-  int gazeStatus = gazePoint.gazePresent()?1:0;
+  int gazeStatus = gazePoint.gazePresent()&&gazePoint.exist()?1:0;
   socket.setData(gazeStatus+ "," +isShoted+ "," +gazePoints[0]+ "," +gazePoints[1]);
   gazePoint.load();
   socket.update();
@@ -64,6 +64,8 @@ void draw() {
 
 void keyReleased() {
   float[] gazePoints = gazePoint.getPoints();
-  imageScratch.shoted(gazePoints[0], gazePoints[1]);
-  gazePoint.shoted();
+  if(gazePoint.exist()){
+    imageScratch.shoted(gazePoints[0], gazePoints[1]);
+    gazePoint.shoted();
+  }
 }

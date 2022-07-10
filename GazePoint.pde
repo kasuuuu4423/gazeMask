@@ -9,11 +9,17 @@ class GazePoint{
   color c;
   float alpha = 120;
   
+  int maxShotCount = 20;
+  int shotCount;
+  
   GazePoint(GazeTrack gazeTrack, color c){
     this.gazeTrack = gazeTrack;
     x = 0;
     y = 0;
     this.c = c;
+    
+    shotCount = maxShotCount;
+    alpha = shotCount*10;
   }
   
   GazePoint(color c){
@@ -22,12 +28,18 @@ class GazePoint{
     this.c = c;
   }
   
+  boolean exist(){
+    return shotCount > 0;
+  }
+  
   boolean isShoted(){
     return isShoted; 
   }
   
   void shoted(){
     isShoted = true;
+    alpha = shotCount*10;
+    shotCount--;
   }
   
   void load(){

@@ -28,8 +28,16 @@ class Socket{
     if(server != null){
         println("send: " + data);
         server.write(data);
+        Client client = server.available();
+        client.write(data);
+        String s = client.readString();
+        if (s != null) {
+          println("recieve: " + s);
+          recieveData = s;
+        }
     }
     else if(client != null){
+      client.write(data);
       String s = client.readString();
       if (s != null) {
         println("recieve: " + s);
