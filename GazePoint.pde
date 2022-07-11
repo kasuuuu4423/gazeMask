@@ -4,13 +4,20 @@ class GazePoint{
   GazeTrack gazeTrack;
   float x, y;
   float px, py;
+
+  Point goal = new Point(10, 10);
+  boolean goaled = false;
+  //ArrayList<Point> = new ArrayList<Point>();
+
   boolean isShoted = false;
   int status = 0;
   color c;
   float alpha = 120;
   
   int maxShotCount = 20;
+  int countSec = 1;
   int shotCount;
+  ArrayList<Boolean> chargeCount = new ArrayList<Boolean>();
   
   GazePoint(GazeTrack gazeTrack, color c){
     this.gazeTrack = gazeTrack;
@@ -35,15 +42,34 @@ class GazePoint{
   boolean isShoted(){
     return isShoted; 
   }
+
+  boolean isGoal(){
+    return goaled;
+  }
   
-  void shoted(){
+  void shoted(float x, float y){
     isShoted = true;
     alpha = shotCount*10;
+    chargeCount = new ArrayList<Boolean>();
+    println(goal.distance(new Point(x, y)));
+    if(goal.distance(new Point(x, y)) < 50){
+      goaled = true;
+    }
     shotCount--;
   }
   
   void load(){
     isShoted = false;
+  }
+
+  void charge() {
+    this.chargeCount.add(true);
+    // リストがframeset分溜まった = １秒充電エリアを見た、ので、スキャン回数を１つ回復
+    if (this.chargeCount.size() >= frameRate * this.countSec) {
+      if (shotCount < maxShotCount) shotCount = shotCount + 1;
+      this.chargeCount = new ArrayList<Boolean>();
+      alpha = shotCount*10;
+    }
   }
   
   void setRecieveData(String[] data){
@@ -55,7 +81,13 @@ class GazePoint{
   }
   
   void setNowPoint(){
-    if(gazeTrack.gazePresent()){
+    if(useMouse){
+      px = x;
+      py = y;
+      x = mouseX;
+      y = mouseY;
+    }
+    else if(gazeTrack.gazePresent()){
       px = x;
       py = y;
       x = gazeTrack.getGazeX();
@@ -64,10 +96,10 @@ class GazePoint{
   }
   
   void setNowPoint(int x, int y){
-      px = this.x;
-      py = this.y;
-      this.x = x;
-      this.y = y;
+    px = this.x;
+    py = this.y;
+    this.x = x;
+    this.y = y;
   }
   
   float[] getPoints(){
@@ -107,5 +139,23 @@ class GazePoint{
     if(gazeStatus()){
       ellipse(x, y, 80, 80);
     }
+    charge();
+  }
+}
+
+class Point{
+  float x, y;
+
+  Point(float x, float y){
+    this.x = x;
+    this.y = y;
+  }
+
+  float distance(float x2, float y2){
+    return dist(x, y, x2, y2);
+  }
+
+  float distance(Point p2){
+    return dist(x, y, p2.x, p2.y);
   }
 }
