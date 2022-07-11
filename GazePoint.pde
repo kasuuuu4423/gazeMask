@@ -4,6 +4,8 @@ class GazePoint{
   GazeTrack gazeTrack;
   float x, y;
   float px, py;
+  float curX, curY;
+  float t = 0.3;
 
   Point goal = new Point(10, 10);
   boolean goaled = false;
@@ -24,6 +26,8 @@ class GazePoint{
     x = 0;
     y = 0;
     this.c = c;
+    curX = width/2;
+    curY = height/2;
     
     shotCount = maxShotCount;
     alpha = shotCount*10;
@@ -51,7 +55,6 @@ class GazePoint{
     isShoted = true;
     alpha = shotCount*10;
     chargeCount = new ArrayList<Boolean>();
-    println(goal.distance(new Point(x, y)));
     if(goal.distance(new Point(x, y)) < 50){
       goaled = true;
     }
@@ -64,7 +67,6 @@ class GazePoint{
 
   void charge() {
     this.chargeCount.add(true);
-    // リストがframeset分溜まった = １秒充電エリアを見た、ので、スキャン回数を１つ回復
     if (this.chargeCount.size() >= frameRate * this.countSec) {
       if (shotCount < maxShotCount) shotCount = shotCount + 1;
       this.chargeCount = new ArrayList<Boolean>();
@@ -88,6 +90,7 @@ class GazePoint{
       y = mouseY;
     }
     else if(gazeTrack.gazePresent()){
+      println(x);
       px = x;
       py = y;
       x = gazeTrack.getGazeX();
@@ -137,7 +140,9 @@ class GazePoint{
     stroke(50, 100);
     strokeWeight(4);
     if(gazeStatus()){
-      ellipse(x, y, 80, 80);
+      curX = x*t + curX*(1.0-t);
+      curY = y*t + curY*(1.0-t);
+      ellipse(curX, curY, 80, 80);
     }
     charge();
   }
